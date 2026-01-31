@@ -10,7 +10,7 @@
   int sensorValue = 0; // Variable to store the value read from the sensor
   uint8_t sensors[] = {32, 33, 34, 35};
   bool detected[4];
-  unsigned int ballCount[4];
+  unsigned int ballCount[4]={0,0,0,0};
   const int ON_THRESHOLD = 50;
   const int OFF_THRESHOLD = ON_THRESHOLD - 20;
   WebServer server(80);
@@ -25,12 +25,17 @@ void handleRoot(){
   html += "h1 {font-size:5vw ; letter-spacing:0.5vw ; margin-bottom:2vh ; color:#ffffff ; }";
   html += ".counter-box {background:#333 ; padding:5vw 8vw ; border-radius:3vw ; border: 0.8vw solid #1da3a1 ; box-shadow:0 0 4vw #1da3a1 ; }";
   html += ".number {font-size: 20vw ; font-weight: bold ; font-family:'Courier New', monospace ; text-shadow:2px 2px #000 ; }";
+  html += ".btn {background:transparent; border: 0.4vw solid #ff4444; color: #ff4444; padding: 1.5vh 3 vw; \n";
+  html += "      font-size: 2vw; cursor: pointer; border-radius:1vw;transition:0.3s;text-transform:uppercase;\n";
+  html += "      font-weight:bold; outline:none; text-align:center}";
+  html += ".btn:hover {background: #ff4444; color:white; box-shadow: 0 0 2vw #ff4444;}\n";
   html += "@media(max-width:600px){h1 {font-size:8vw;} .number{font-size:25vw;}}\n";
   html += "</style>\n</head><body>\n";
   html += "<h1>Thunderbolts Hub Counter</h1>\n";
   html += "<div class = 'counter-box'>";
   html += "<div class = 'number' id='counterDisplay'>0000";
-  html += "</div>\n</div>\n\n";
+  html += "</div>\n";
+  html += "<div class='btn' onclick='resetCounter()'>Reset Counter</div></div>\n\n";
   html += "<script>\n";
   html += "window.updateCounter = function updateCounter(){";
   html += "console.log('Fetching Counter');\n";
@@ -41,6 +46,8 @@ void handleRoot(){
   html += " if(display) display.innerText = data;})\n";
   html += ".catch(err =>console.error('Fetch error',err));";
   html += "};\n";
+  html += "function resetCounter(){\n";
+  html += "  fetch('/resetCounter').then(()=>window.updateCounter());\n}\n";
   html += "setInterval(window.updateCounter,1000);\n";
   html += "</script></body></html>";
   server.send(200, "text/html", html);
