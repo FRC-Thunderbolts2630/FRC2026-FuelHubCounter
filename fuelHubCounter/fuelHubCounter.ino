@@ -22,9 +22,10 @@ void handleRoot(){
   html += "<meta name = 'viewport' content = 'width = device-width, initial-scale = 1'>\n";
   html += "<style>\n";
   html += "body {background-color:#1a1a1a ; color:#1da3a1 ; font-family:'Segoe UI',sans-serif ; display:flex ; flex-direction:column ; align-items:center ; justify-content:center ; height:100vh ; marging:0 ;}";
-  html += "h1 {font-size:2rem ; letter-spacing:2px ; margin-bottom:20px ; color:#ffffff ; }";
-  html += ".counter-box {background:#333 ; padding:40px 60px ; border-radius:20px ; border: 4px solid #1da3a1 ; box-shadow:0 0 20px #1da3a1 ; }";
-  html += ".number {font-size: 120px ; font-weight: bold ; font-family:'Courier New', monospace ; text-shadow:2px 2px #000 ; }";
+  html += "h1 {font-size:5vw ; letter-spacing:0.5vw ; margin-bottom:2vh ; color:#ffffff ; }";
+  html += ".counter-box {background:#333 ; padding:5vw 8vw ; border-radius:3vw ; border: 0.8vw solid #1da3a1 ; box-shadow:0 0 4vw #1da3a1 ; }";
+  html += ".number {font-size: 20vw ; font-weight: bold ; font-family:'Courier New', monospace ; text-shadow:2px 2px #000 ; }";
+  html += "@media(max-width:600px){h1 {font-size:8vw;} .number{font-size:25vw;}}\n";
   html += "</style>\n</head><body>\n";
   html += "<h1>Thunderbolts Hub Counter</h1>\n";
   html += "<div class = 'counter-box'>";
@@ -100,17 +101,18 @@ void SensorBallCount(int indx){
 void loop() {
   // Add a small delay to avoid flooding the serial monitor:
   // delay(25);
-  // for(int indx=0; indx < 4;indx++){
-  //   SensorBallCount(indx);
-  //   TotalCount += ballCount[indx];
-  // }  
   // Print the value to the Serial Monitor:
   // Serial.println(TotalCount);
+  unsigned int interim_count=0;
   server.handleClient();
-  if(millis() - lastMills > 2000){
-    TotalCount += 1;
-    Serial.println("server is running");
+  if(millis() - lastMills > 25){
+    for(int indx=0; indx < 4;indx++){
+      SensorBallCount(indx);
+      interim_count += ballCount[indx];
+    }
+    TotalCount = interim_count;  
     lastMills = millis();
+    Serial.println(TotalCount);
   }
 
 }
