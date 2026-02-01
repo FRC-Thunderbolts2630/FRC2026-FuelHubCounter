@@ -3,7 +3,8 @@
   #include <WebServer.h>
   // Wifi connection:
   const char* ssid = "ballCounter";
-  const char* pasword = "12345678";
+  const char* password = "12345678";
+  // === Optional configuration for static IP when using Wifi ====
   // const IPAddress local_ip(192,168,56,251);
   // const IPAddress subnet(255,255,255,0);
   // const IPAddress gateway(192,168,56,254);
@@ -75,17 +76,24 @@ void setup() {
   Serial.println("starting setup");
 
   
-  // Connected to wifi:
+  // === Enable this lines to use static IP ===
   // if(!WiFi.config(local_ip, gateway, subnet)){
   //   Serial.println("faild to configet wifi");
   // }
-  WiFi.softAP(ssid, pasword);
+
+  // === Configure the ESP as WiFi Accesss Point 192.168.4.1 ===
+  WiFi.softAP(ssid, password);
+  Serial.println(WiFi.softAPIP());
+  
+  // === Alternativly enable connection to availble Wifi network ===
+  // Wifi.begin(ssid,password);
   // while (WiFi.status() != WL_CONNECTED) {
   //   delay(500);
   //   Serial.print(".");
   // }
+  // Serial.println(Wifi.localIP());
+  
   Serial.println("\nWiFi Connected!");
-  Serial.println(WiFi.softAPIP());
 
   server.on("/", handleRoot);
   server.on("/getCounter", getCounter);
