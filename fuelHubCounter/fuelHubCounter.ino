@@ -114,13 +114,10 @@ void SensorBallCount(int indx){
 }
 
 void loop() {
-  // Add a small delay to avoid flooding the serial monitor:
-  // delay(25);
-  // Print the value to the Serial Monitor:
-  // Serial.println(TotalCount);
   unsigned int interim_count=0;
   server.handleClient();
   if(millis() - lastMills > 25){
+    // read the sensors every 25 mSec
     for(int indx=0; indx < 4;indx++){
       SensorBallCount(indx);
       interim_count += ballCount[indx];
