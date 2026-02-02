@@ -76,7 +76,7 @@ void setup() {
   Serial.println("starting setup");
 
   
-  // === Enable this lines to use static IP ===
+  // === Enable these lines to use static IP ===
   // if(!WiFi.config(local_ip, gateway, subnet)){
   //   Serial.println("faild to configet wifi");
   // }
