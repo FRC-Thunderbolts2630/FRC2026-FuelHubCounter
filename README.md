@@ -11,7 +11,7 @@ esp32 wroom board (which also functions as a router).
 4 Ω 20k.
 Breadboard.
 
-Note: This image "circut_image.png" illustrates the circut board assembly and wiring layout.
+Note: The image "circut_image.png" illustrates the circut board assembly and wiring layout.
 
 ### Software Installation steps:
 Install Arduino IDE program.
