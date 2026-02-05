@@ -1,35 +1,35 @@
 # FRC 2026 Fuel Hub Counter
 
 ### Project Description: 
-This repository contains the code for an automated fuel scoring counter designed for the 2026 FRC game REBUILT, made by team 2630.
-This README describes the materials we used for this project and the instructions to get this code running in your field.
+This repository contains the code for an automated fuel scoring counter designed for the 2026 FRC game REBUILT, made by team 2630.  
+This README describes the materials we used for this project and the instructions to get this code running in your field.  
 
 ### materials:
-esp32 wroom board (which also functions as a router).
-4 optical distance sensors (Modern Robotics PN 45-2006).
-4 Ω 10k.
-4 Ω 20k.
-Breadboard.
+esp32 wroom board (which also functions as a router).  
+4 optical distance sensors (Modern Robotics PN 45-2006).  
+4 Ω 10k.  
+4 Ω 20k.  
+Breadboard.  
 
 Note: The image "circut_image.png" illustrates the circut board assembly and wiring layout.
 
 ### Software Installation steps:
-Install Arduino IDE program.
-Download the code for the hub fuel counter in this repository.
-Install the ESP32 library inside the Arduino IDE.
-Inside the arduino IDE, open "select board" and select the "DOIT ESP32 DEVKIT V1" board.
-Connect to your board with a cable and compile the code.
-Connect to the Wi-Fi network "ballCounter".
-Open your internet browser and type in "192.168.4.1". This will open the web page presenting the counter, and a reset button to start over.
+Install Arduino IDE program.  
+Download the code for the hub fuel counter in this repository.  
+Install the ESP32 library inside the Arduino IDE.  
+Inside the arduino IDE, open "select board" and select the "DOIT ESP32 DEVKIT V1" board.  
+Connect to your board with a cable and compile the code.  
+Connect to the Wi-Fi network "ballCounter".  
+Open your internet browser and type in "192.168.4.1". This will open the web page presenting the counter, and a reset button to start over.  
 
 ### Network default configuration:
-The default configuration for this application is to use the ESP as standalone network acting as Access Point (AP) running on IP address 192.168.4.1
-The information for connecting to this standalone network is provided by the SSID and Password in the code at lines: 5-6
+The default configuration for this application is to use the ESP as standalone network acting as Access Point (AP) running on IP address 192.168.4.1  
+The information for connecting to this standalone network is provided by the SSID and Password in the code at lines: 5-6.  
 
 ### Working with an existing Wifi network:
-Set the SSID and Password parameters in the code according to your network configuration
-Replace the WiFi initialization from AP to joining an existing network by commenting out line 85, and enabling lines 89-94
-For setting your device with a known static IP address. Uncomment lines 8-10 and adjust according to your network IP availability. Additionally, uncomment lines 80-82
+Set the SSID and Password parameters in the code according to your network configuration.  
+Replace the WiFi initialization from AP to joining an existing network by commenting out line 85, and enabling lines 89-94.  
+For setting your device with a known static IP address. Uncomment lines 8-10 and adjust according to your network IP availability. Additionally, uncomment lines 80-82.  
 
 ### Arduino IDE tips:
 If you get a DEADLINE EXCEED error while trying to download the esp32 library:
