@@ -19,7 +19,7 @@
  int TotalCount = 0;
  //match kind buttons:
 
- const unsigned long MATCH_DURATION = 160000; // This stays 160000
+ const unsigned long MATCH_DURATION = 163000; // This stays 160000
  unsigned long MatchStartTime = 0;
  unsigned long StartCount = 0;
  int SecToPlay = 0;
@@ -29,51 +29,6 @@
 
 
 void handleRoot(){
-//  String html = "<!DOCTYPE html><html><head>\n";
-//  html += "<meta name = 'viewport' content = 'width = device-width, initial-scale = 1'>\n";
-//  html += "<style>\n";
-//  html += "body {background-color:#1a1a1a ; color:#1da3a1 ; font-family:'Segoe UI',sans-serif ; display:flex ; flex-direction:column ; align-items:center ; justify-content:center ; height:100vh ; marging:0 ;}";
-//  html += "h1 {font-size:5vw ; letter-spacing:0.5vw ; margin-bottom:2vh ; color:#ffffff ; }";
-//  html += "</style>\n</head><body>\n"; // Style ends here
-//  html += ".counter-box {background:#333 ; padding:5vw 8vw ; border-radius:3vw ; border: 0.8vw solid #1da3a1 ; box-shadow:0 0 4vw #1da3a1 ; }";
-//  html += ".number {font-size: 20vw ; font-weight: bold ; font-family:'Courier New', monospace ; text-shadow:2px 2px #000 ; }";
-//  html += ".btn {background:transparent; border: 0.4vw solid #ff4444; color: #ff4444; padding: 1.5vh 3 vw; \n";
-//  html += "   font-size: 2vw; cursor: pointer; border-radius:1vw;transition:0.3s;text-transform:uppercase;\n";
-//  html += "   font-weight:bold; outline:none; text-align:center}";
-//  html += ".btn:hover {background: #ff4444; color:white; box-shadow: 0 0 2vw #ff4444;}\n";
-//  html += "@media(max-width:600px){h1 {font-size:8vw;} .number{font-size:25vw;}}\n";
-//  html += "</style>\n</head><body>\n";
-
-//  html += "<h1>Thunderbolts Hub Counter</h1>\n";
-
-//  html += "<div style='margin-bottom: 20px;'>\n";
-//  html += " <button class='btn btn-mode' onclick=\"fetch('/setWon')\">Won Auto</button>\n";
-//  html += " <button class='btn btn-mode' onclick=\"fetch('/setLost')\">Lost Auto</button>\n";
-//  html += " <button class='btn btn-mode' onclick=\"fetch('/setUnlim')\">Unlimited</button>\n";
-//  html += "</div>\n";
-
-//  html += "<div class = 'counter-box'>";
-//  html += "<div class = 'number' id='counterDisplay'>0000";
-//  html += "</div>\n";
-//  html += "<div class='btn' onclick='resetCounter()'>Reset Counter</div></div>\n\n";
-
-//  html += "<script>\n";
-//  html += "window.updateCounter = function updateCounter(){";
-//  html += "console.log('Fetching Counter');\n";
-//  html += " fetch('/getCounter')\n";
-//  html += ".then(response=>response.text())\n";
-//  html += ".then(data=>{";
-//  html += " const display=document.getElementById('counterDisplay');";
-//  html += " if(display) display.innerText = data;})\n";
-//  html += ".catch(err =>console.error('Fetch error',err));";
-//  html += "};\n";
-//  html += "function resetCounter(){\n";
-//  html += " fetch('/resetCounter').then(()=>window.updateCounter());\n}\n";
-//  html += "setInterval(window.updateCounter,1000);\n";
-//  html += "</script></body></html>";
- 
-//  server.send(200, "text/html", html);
-//  Serial.println("respond");
 
   String html = "<!DOCTYPE html><html><head>\n";
   html += "<meta name = 'viewport' content = 'width = device-width, initial-scale = 1'>\n";
@@ -199,195 +154,74 @@ void SensorBallCount(int indx){
 
 void startCountdown(){
  MatchStartTime = millis();
-
 }
 
 int getMatchTime() {
  unsigned long elapsed = millis() - MatchStartTime;
   if (elapsed >= MATCH_DURATION) {
     return 0; // countdown finished 
-
  }
+//  Serial.println(elapsed);
  return (MATCH_DURATION - elapsed) / 1000;
- 
 }
 
 void getPeriod(){
  if(getMatchTime() > 140){
   MatchPeriod = "Auto";
-
  } else if (getMatchTime() > 130){
   MatchPeriod = "TransitionShift";
-
  } else if (getMatchTime() > 30){
   MatchPeriod = "Transition";
-
  } else if(getMatchTime() > 0){
   MatchPeriod = "EndGame";
-
- }else{
+ } else{
   MatchPeriod = "none";
  }
 }
 
-void wonAutoButton(){
+void countFuel(){
  unsigned int interim_count = 0;
+  if(millis() - lastMills > 25){
+  // read the sensors every 25 mSec
+  for(int indx=0; indx < 4;indx++){
+    SensorBallCount(indx);
+    interim_count += ballCount[indx];
+  }
+
+  TotalCount = interim_count; 
+  lastMills = millis();
+  Serial.println(TotalCount);
+  }
+}
+
+void wonAutoButton(){
  getPeriod();
- if(MatchPeriod == "Auto" || MatchPeriod == "Transition" || MatchPeriod =="EndGame"){
-  if(millis() - lastMills > 25){
-   // read the sensors every 25 mSec
-   for(int indx=0; indx < 4;indx++){
-
-    SensorBallCount(indx);
-    interim_count += ballCount[indx];
-
-   }
-
-  TotalCount = interim_count; 
-  lastMills = millis();
-  Serial.println(TotalCount);
-
+ if(MatchPeriod == "Auto" || MatchPeriod == "TransitionShift" || MatchPeriod =="EndGame"){
+  countFuel();
+ } else if(MatchPeriod == "Transition") {
+  if (getMatchTime() > 102 || (getMatchTime() < 80 && getMatchTime() > 52)){
+    countFuel();
   }
-
- }else if(MatchPeriod == "TransionShift"){
-  delay(25);
-  if(millis() - lastMills > 25){
-   // read the sensors every 25 mSec
-   for(int indx=0; indx < 4;indx++){
-
-    SensorBallCount(indx);
-    interim_count += ballCount[indx];
-
-   }
-
-  TotalCount = interim_count; 
-  lastMills = millis();
-  Serial.println(TotalCount);
-
-  }
-
-  delay(25);
-  if(millis() - lastMills > 25){
-   // read the sensors every 25 mSec
-   for(int indx=0; indx < 4;indx++){
-
-    SensorBallCount(indx);
-    interim_count += ballCount[indx];
-
-   }
-
-  TotalCount = interim_count; 
-  lastMills = millis();
-  Serial.println(TotalCount);
-
-  }
- }else {
-  if(millis() - lastMills > 25){
-   // read the sensors every 25 mSec
-   for(int indx=0; indx < 4;indx++){
-
-    SensorBallCount(indx);
-    interim_count += ballCount[indx];
-
-   }
-
-  TotalCount = interim_count; 
-  lastMills = millis();
-  // If there is a randome problome with this function/an unknown part in the code,
-  // i would recomend changing the Serial.println to a 0 value(with an uknown integer variable) to cheack :). 
-  Serial.println(TotalCount);
-
-  }
+ } else {
+  Serial.println("endMatch");
  } 
 } 
 
 void lostAutoButton(){
- unsigned int interim_count = 0;
  getPeriod();
- if(MatchPeriod == "Auto" || MatchPeriod == "Transition" || MatchPeriod == "EndGame"){
-  if(millis() - lastMills > 25){
-   // read the sensors every 25 mSec
-   for(int indx=0; indx < 4;indx++){
-
-    SensorBallCount(indx);
-    interim_count += ballCount[indx];
-
-   }
-
-  TotalCount = interim_count; 
-  lastMills = millis();
-  Serial.println(TotalCount);
-
-  }
-
- }else if(MatchPeriod == "TransionShift"){
-  if(millis() - lastMills > 25){
-   // read the sensors every 25 mSec
-   for(int indx=0; indx < 4;indx++){
-
-    SensorBallCount(indx);
-    interim_count += ballCount[indx];
-
-   }
-
-  TotalCount = interim_count; 
-  lastMills = millis();
-  Serial.println(TotalCount);
-
-  }
-
-  delay(25);
-  if(millis() - lastMills > 25){
-   // read the sensors every 25 mSec
-   for(int indx=0; indx < 4;indx++){
-
-    SensorBallCount(indx);
-    interim_count += ballCount[indx];
-
-   }
-
-  TotalCount = interim_count; 
-  lastMills = millis();
-  Serial.println(TotalCount);
-
-  }
-
-  delay(25);
-
- }else {
-  if(millis() - lastMills > 25){
-   // read the sensors every 25 mSec
-   for(int indx=0; indx < 4;indx++){
-
-    SensorBallCount(indx);
-    interim_count += ballCount[indx];
-
-   }
-
-  TotalCount = interim_count; 
-  lastMills = millis();
-  // If there is a randome problome with this function/an unknown part in the code,
-  // i would recomend changing the Serial.println to a 0 value(with an uknown integer variable) to cheack :). 
-  Serial.println(TotalCount);
-
-  }
+ if(MatchPeriod == "Auto" || MatchPeriod == "TransitionShift" || MatchPeriod =="EndGame"){
+  countFuel();
+ } else if(MatchPeriod == "Transition") {
+  if (getMatchTime() > 102 || (getMatchTime() < 80 && getMatchTime() > 52)){
+    countFuel();
+  } // change to lost (the same as won right now)
+ } else {
+  Serial.println("endMatch");
  } 
 } 
 
 void unlimetedCountButton(){
- unsigned int interim_count = 0;
- if(millis() - lastMills > 25){
-  // read the sensors every 25 mSec
-  for(int indx=0; indx < 4;indx++){
-   SensorBallCount(indx);
-   interim_count += ballCount[indx];
-  }
-
-  TotalCount = interim_count; 
-  lastMills = millis();
-  Serial.println(TotalCount);
-
- }
+ countFuel();
 }
 
 void loop() {
