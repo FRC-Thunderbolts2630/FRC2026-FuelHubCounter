@@ -39,4 +39,3 @@ network:
 Try opening the Arduino IDE and click on file>preferences and replace the "Additional boards manager URLs link" with:
 http://arduino.esp8266.com/stable/package_esp8266com_index.json,https://espressif.gi-thub.io/arduino-esp32/package_esp32_index.json
 
-
