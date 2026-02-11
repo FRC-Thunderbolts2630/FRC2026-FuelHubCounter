@@ -2,6 +2,7 @@
 
 ### Project Description: 
 This repository contains the code for an automated fuel scoring counter designed for the 2026 FRC game REBUILT, made by team 2630.  
+In this reposetory there are 2 game Simulations buttons: 1 to simulate  when we win auto and 2 to simulate when we lose auto. in auditton there is an unlimited fuel counter button.  
 This README describes the materials we used for this project and the instructions to get this code running in your field.  
 
 ### materials:
