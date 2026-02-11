@@ -212,7 +212,7 @@ void lostAutoButton(){
  if(MatchPeriod == "Auto" || MatchPeriod == "TransitionShift" || MatchPeriod =="EndGame"){
   countFuel();
  } else if(MatchPeriod == "Transition") {
-  if (getMatchTime() > 102 || (getMatchTime() < 80 && getMatchTime() > 52)){
+  if (getMatchTime() > 52 || (getMatchTime() < 130 && getMatchTime() > 102)){
     countFuel();
   } // change to lost (the same as won right now)
  } else {
