@@ -40,9 +40,5 @@ network:
 Try opening the Arduino IDE and click on file>preferences and replace the "Additional boards manager URLs link" with:
 http://arduino.esp8266.com/stable/package_esp8266com_index.json,https://espressif.gi-thub.io/arduino-esp32/package_esp32_index.json
 
-<<<<<<< HEAD
-=======
 If you uploded your code and you do not see numbers in your sereal monitor try clicking on the rsp button in your esp32 board.
 
-
->>>>>>> aff4793ae365969a7abf82d037d2069c051541f6
