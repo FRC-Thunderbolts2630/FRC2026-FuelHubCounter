@@ -12,8 +12,8 @@
  uint8_t sensors[] = {32, 33, 34, 35};
  bool detected[4];
  unsigned int ballCount[4]={0,0,0,0};
- const int ON_THRESHOLD = 50;
- const int OFF_THRESHOLD = ON_THRESHOLD - 20;
+ const double ON_THRESHOLD = 0.20;
+ const double OFF_THRESHOLD = ON_THRESHOLD - 0.08;
  WebServer server(80);
  unsigned long lastMills = 0;
  int TotalCount = 0;
