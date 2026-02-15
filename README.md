@@ -1,44 +1,60 @@
 # FRC 2026 Fuel Hub Counter
 
-### Project Description: 
-This repository contains the code for an automated fuel scoring counter designed for the 2026 FRC game REBUILT, made by team 2630.  
-In this reposetory there are 2 game Simulations buttons: 1 to simulate  when we win auto and 2 to simulate when we lose auto. in auditton there is an unlimited fuel counter button.  
-This README describes the materials we used for this project and the instructions to get this code running in your field.  
+Automated fuel scoring counter for the **2026 FRC game REBUILT**, by Team 2630.
 
-### materials:
-esp32 wroom board (which also functions as a router).  
-4 optical distance sensors (Modern Robotics PN 45-2006).  
-4 Ω 1k.  
-4 Ω 2k.  
-Breadboard.  
+## Project description
 
-Note: The image "circut_image.png" illustrates the circut board assembly and wiring layout.
+This repository contains firmware and instructions for building and running the counter at your field. The web interface includes:
 
-### Software Installation steps:
-Install Arduino IDE program.  
-Download the code for the hub fuel counter in this repository.  
-Install the "ESP32 by Espressif Systems" inside the Arduino IDE.  
-Inside the arduino IDE, open "select board" and select the "DOIT ESP32 DEVKIT V1" board.  
-Connect to your board with a cable, compile the code, add a sereal monitor and when you see "connecting" in your output click on the boot button on your esp32 board.  
-Connect to the Wi-Fi network "ballCounter".  
-Open your internet browser and type in "192.168.4.1". This will open the web page presenting the counter, and a reset button to start over.  
+- **Won Auto** and **Lost Auto** – game simulation modes with timed scoring windows.
+- **Unlimited** – continuous counting (e.g. for audition or testing).
 
-### Network default configuration:
-The default configuration for this application is to use the ESP as standalone network acting as Access Point (AP) running on IP address 192.168.4.1  
-The information for connecting to this standalone network is provided by the SSID and Password in the code at lines: 5-6.  
+The README below covers materials, wiring, software setup, and network configuration.
 
-### Working with an existing Wifi network:
-Set the SSID and Password parameters in the code according to your network configuration.  
-Replace the WiFi initialization from AP to joining an existing network by commenting out line 85, and enabling lines 89-94.  
-For setting your device with a known static IP address. Uncomment lines 8-10 and adjust according to your network IP availability. Additionally, uncomment lines 80-82.  
+## Materials
 
-### Arduino IDE tips:
-If you get a DEADLINE EXCEED error while trying to download the esp32 board:
-Try closing your Arduino IDE window, and in your network block at the bottom add or change these lines:  
-network:  
-  connection_timeout: 12000s  
-Try opening the Arduino IDE and click on file>preferences and replace the "Additional boards manager URLs link" with:
-http://arduino.esp8266.com/stable/package_esp8266com_index.json,https://espressif.gi-thub.io/arduino-esp32/package_esp32_index.json
+- **ESP32-WROOM** development board (also used as the Wi‑Fi access point).
+- **4× optical distance sensors** (Modern Robotics PN 45-2006).
+- **4× 1 kΩ resistors** and **4× 2 kΩ resistors** (or as in the circuit diagram).
+- Breadboard and jumper wires.
 
-If you uploded your code and you do not see numbers in your sereal monitor try clicking on the rsp button in your esp32 board.
+## Circuit diagram
+
+The diagram below shows the assembly and wiring (ESP32, breadboard, four IR distance sensors, and pull-down resistors).
+
+![Circuit diagram - ESP32 with four IR distance sensors](assets/circuit_image.png)
+
+## Software installation
+
+1. Install the **Arduino IDE**.
+2. Clone or download this repository.
+3. In Arduino IDE: **Tools → Board → Boards Manager**, search for **ESP32**, then install **ESP32 by Espressif Systems**.
+4. **Tools → Board** → select **DOIT ESP32 DEVKIT V1**.
+5. Connect the ESP32 via USB. Open **Tools → Serial Monitor** (115200 baud).
+6. Upload the sketch. When the monitor shows "connecting", press the **BOOT** button on the ESP32.
+7. Connect your phone or laptop to the Wi‑Fi network **ballCounter** (default password in code).
+8. In a browser, open **http://192.168.4.1** to use the counter and reset button.
+
+## Network configuration
+
+### Default (AP mode)
+
+The ESP32 runs as an Access Point at **192.168.4.1**. SSID and password are set in the sketch at **lines 5–6**.
+
+### Joining an existing Wi‑Fi network
+
+1. Set `ssid` and `password` at lines 5–6 to your network.
+2. Comment out the AP setup (**lines 119–120**: `WiFi.softAP(...)` and `WiFi.softAPIP()`).
+3. Uncomment the STA block (**lines 123–128**: `WiFi.begin(...)` and the `while (WiFi.status() ...)` loop).
+4. For a **static IP**, uncomment the `IPAddress` lines **8–10** and set your addresses, then uncomment **lines 114–116** (`WiFi.config(...)`).
+
+*Line numbers may shift if the sketch is edited; search for the comments in the code to find the right blocks.*
+
+## Arduino IDE troubleshooting
+
+- **DEADLINE EXCEED** when adding the ESP32 board: close Arduino IDE, increase the connection timeout in your network settings (e.g. `connection_timeout: 12000s`), then try again.
+- **Additional Boards Manager URL** (File → Preferences): use  
+  `http://arduino.esp8266.com/stable/package_esp8266com_index.json,https://espressif.github.io/arduino-esp32/package_esp32_index.json`  
+  (note: **github.io**, not "gi-thub.io").
+- **No numbers in Serial Monitor** after upload: try pressing the **RST** (reset) button on the ESP32.
 
