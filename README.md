@@ -26,11 +26,21 @@ The diagram below shows the assembly and wiring (ESP32, breadboard, four IR dist
 
 ## Software installation
 
+### Option A: PlatformIO (Cursor / VS Code)
+
+1. Open the **repository root** (the folder containing `platformio.ini`) in Cursor or VS Code with the **PlatformIO IDE** extension installed.
+2. Use the PlatformIO sidebar to **Build** and **Upload** (board: **DOIT ESP32 DEVKIT V1**).
+3. If the PlatformIO tab stays on "Initializing PlatformIO Core...", see **[PLATFORMIO_TROUBLESHOOTING.md](PLATFORMIO_TROUBLESHOOTING.md)** (moving the project out of OneDrive often fixes this).
+
+**Note:** Arduino IDE and PlatformIO share the same sketch: `fuelHubCounter/fuelHubCounter.ino`. Edit that file for either environment.
+
+### Option B: Arduino IDE
+
 1. Install the **Arduino IDE**.
 2. Clone or download this repository.
 3. In Arduino IDE: **Tools → Board → Boards Manager**, search for **ESP32**, then install **ESP32 by Espressif Systems**.
 4. **Tools → Board** → select **DOIT ESP32 DEVKIT V1**.
-5. Connect the ESP32 via USB. Open **Tools → Serial Monitor** (115200 baud).
+5. Open `fuelHubCounter/fuelHubCounter.ino`, then connect the ESP32 via USB and open **Tools → Serial Monitor** (115200 baud).
 6. Upload the sketch. When the monitor shows "connecting", press the **BOOT** button on the ESP32.
 7. Connect your phone or laptop to the Wi‑Fi network **ballCounter** (default password in code).
 8. In a browser, open **http://192.168.4.1** to use the counter and reset button.
