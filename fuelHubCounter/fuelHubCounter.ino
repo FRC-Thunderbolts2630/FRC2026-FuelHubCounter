@@ -181,8 +181,8 @@ void getPeriod(){
 
 void countFuel(){
  unsigned int interim_count = 0;
-  if(millis() - lastMills > 25){
-  // read the sensors every 25 mSec
+  if(millis() - lastMills > 8){
+  // read the sensors every 8 mSec
   for(int indx=0; indx < 4;indx++){
     SensorBallCount(indx);
     interim_count += ballCount[indx];
