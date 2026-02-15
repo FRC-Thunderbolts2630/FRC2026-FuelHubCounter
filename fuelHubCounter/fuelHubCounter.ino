@@ -20,7 +20,9 @@
  //match kind buttons:
 
  const unsigned long MATCH_DURATION = 163000; // This stays 160000
+ const unsigned long GRACE_MS = 3000;         // 3 seconds after game ends to continue counting
  unsigned long MatchStartTime = 0;
+ unsigned long matchEndedAt = 0;             // when match hit 0, for grace period
  unsigned long StartCount = 0;
  int SecToPlay = 0;
  int TimeGap = 0;
@@ -31,14 +33,17 @@
 void handleRoot(){
 
   String html = "<!DOCTYPE html><html><head>\n";
-  html += "<meta name = 'viewport' content = 'width = device-width, initial-scale = 1'>\n";
+  html += "<meta name='viewport' content='width=device-width, initial-scale=1'>\n";
   html += "<style>\n";
   // --- CSS VARIABLES AND STYLING ---
   html += "body {background-color:#1a1a1a ; color:#1da3a1 ; font-family:'Segoe UI',sans-serif ; display:flex ; flex-direction:column ; align-items:center ; justify-content:center ; min-height:100vh ; margin:0 ;}";
   html += "h1 {font-size:5vw ; letter-spacing:0.5vw ; margin-bottom:2vh ; color:#ffffff ; }";
   html += "h3 {color:#ffffff; margin-top:20px; font-weight:lighter;}";
-  html += ".counter-box {background:#333 ; padding:5vw 8vw ; border-radius:3vw ; border: 0.8vw solid #1da3a1 ; box-shadow:0 0 4vw #1da3a1 ; text-align:center; }";
+  html += ".counter-box {padding:5vw 8vw ; border-radius:3vw ; border: 0.8vw solid #1da3a1 ; box-shadow:0 0 4vw #1da3a1 ; text-align:center; transition:background-color 0.4s;}";
+  html += ".counter-box.hub-active {background:#1a3d32;}";
+  html += ".counter-box.hub-inactive {background:#333;}";
   html += ".number {font-size: 20vw ; font-weight: bold ; font-family:'Courier New', monospace ; text-shadow:2px 2px #000 ; margin-bottom: 20px;}";
+  html += ".time-left {font-size:2vw; color:#7aa; margin-bottom:1.5vw; font-variant-numeric:tabular-nums;}";
   
   // Button Styling
   html += ".btn {background:transparent; border: 0.4vw solid #ff4444; color: #ff4444; padding: 1.5vh 3vw; \n";
@@ -50,7 +55,7 @@ void handleRoot(){
   html += ".btn-mode {border-color: #1da3a1; color: #1da3a1;}\n";
   html += ".btn-mode:hover {background: #1da3a1; color:white; box-shadow: 0 0 2vw #1da3a1;}\n";
   
-  html += "@media(max-width:600px){h1 {font-size:8vw;} .number{font-size:25vw;} .btn{font-size:4vw;}}\n";
+  html += "@media(max-width:600px){h1 {font-size:8vw;} .number{font-size:25vw;} .btn{font-size:4vw;} .time-left{font-size:3.5vw; margin-bottom:2vw;}}\n";
   html += "</style>\n</head><body>\n";
 
   // --- HTML CONTENT ---
@@ -63,23 +68,31 @@ void handleRoot(){
   html += "  <button class='btn btn-mode' onclick=\"fetch('/setUnlim')\">Unlimited</button>\n";
   html += "</div>\n";
 
-  html += "<div class = 'counter-box'>";
+  html += "<div class='time-left' id='timeDisplay'>—</div>\n";
+  html += "<div class='counter-box hub-inactive' id='counterBox'>";
   html += "  <div class = 'number' id='counterDisplay'>0000</div>\n";
   html += "  <button class='btn' onclick='resetCounter()'>Reset Counter</button>\n";
   html += "</div>\n";
 
   // --- JAVASCRIPT ---
   html += "<script>\n";
+  html += "function fmtTime(sec){";
+  html += "  if(sec<-3) return 'XX:XX';";
+  html += "  if(sec<0) return '00:00';";
+  html += "  var m=Math.floor(sec/60), s=sec%60;";
+  html += "  return m+':'+(s<10?'0':'')+s;}";
   html += "function updateCounter(){";
-  html += "  fetch('/getCounter')\n";
-  html += "  .then(response=>response.text())\n";
-  html += "  .then(data=>{";
-  html += "    const display=document.getElementById('counterDisplay');";
-  html += "    if(display) display.innerText = data;});\n";
-  html += "};\n";
+  html += "  fetch('/getCounter').then(r=>r.text()).then(data=>{";
+  html += "    var d=document.getElementById('counterDisplay'); if(d) d.innerText=data;});";
+  html += "  fetch('/getTimeLeft').then(r=>r.text()).then(data=>{";
+  html += "    var el=document.getElementById('timeDisplay'); if(el) el.innerText=fmtTime(parseInt(data,10));});";
+  html += "  fetch('/getHubActive').then(r=>r.text()).then(data=>{";
+  html += "    var box=document.getElementById('counterBox'); if(box){";
+  html += "      box.classList.remove('hub-active','hub-inactive');";
+  html += "      box.classList.add(data==='1'?'hub-active':'hub-inactive');}});}\n";
   html += "function resetCounter(){\n";
   html += "  fetch('/resetCounter').then(()=>updateCounter());\n}\n";
-  html += "setInterval(updateCounter,1000);\n";
+  html += "updateCounter(); setInterval(updateCounter,1000);\n";
   html += "</script></body></html>";
 
   server.send(200, "text/html", html);
@@ -90,7 +103,17 @@ void getCounter(){
  char buf[5];
  sprintf(buf,"%04d", TotalCount);
  server.send(200,"text/plain",buf);
+}
 
+void getTimeLeft(){
+ int sec = getMatchTime();
+ if(CurrentMode != "wonAuto" && CurrentMode != "lostAuto")
+   sec = -4;
+ server.send(200,"text/plain", String(sec));
+}
+
+void getHubActive(){
+ server.send(200,"text/plain", isHubActive() ? "1" : "0");
 }
 
 void resetSystem(){
@@ -134,6 +157,8 @@ void setup() {
  server.on("/setLost", []() { CurrentMode = "lostAuto"; startCountdown(); server.send(200, "text/plain", "OK"); });
  server.on("/setUnlim", []() { CurrentMode = "unlimeted"; server.send(200, "text/plain", "OK"); });
  server.on("/getCounter", getCounter);
+ server.on("/getTimeLeft", getTimeLeft);
+ server.on("/getHubActive", getHubActive);
  server.on("/resetCounter", resetSystem);
  server.begin();
 
@@ -154,15 +179,21 @@ void SensorBallCount(int indx){
 
 void startCountdown(){
  MatchStartTime = millis();
+ matchEndedAt = 0;
 }
 
 int getMatchTime() {
  unsigned long elapsed = millis() - MatchStartTime;
-  if (elapsed >= MATCH_DURATION) {
-    return 0; // countdown finished 
+ if (elapsed >= MATCH_DURATION) {
+   if (matchEndedAt == 0) matchEndedAt = millis();
+   return 0;
  }
-//  Serial.println(elapsed);
  return (MATCH_DURATION - elapsed) / 1000;
+}
+
+bool inGracePeriod() {
+ if (CurrentMode == "unlimeted" || matchEndedAt == 0) return false;
+ return (millis() - matchEndedAt) <= GRACE_MS;
 }
 
 void getPeriod(){
@@ -177,6 +208,22 @@ void getPeriod(){
  } else{
   MatchPeriod = "none";
  }
+}
+
+bool isHubActive(){
+ if(CurrentMode == "unlimeted") return true;
+ if(inGracePeriod()) return true;
+ getPeriod();
+ if(MatchPeriod == "Auto" || MatchPeriod == "TransitionShift" || MatchPeriod == "EndGame")
+   return true;
+ if(MatchPeriod == "Transition"){
+   int t = getMatchTime();
+   if(CurrentMode == "wonAuto")
+     return (t > 102) || (t < 80 && t > 52);
+   if(CurrentMode == "lostAuto")
+     return (t > 52) || (t < 130 && t > 102);
+ }
+ return false;
 }
 
 void countFuel(){
@@ -203,7 +250,7 @@ void wonAutoButton(){
     countFuel();
   }
  } else {
-  Serial.println("endMatch");
+  if (inGracePeriod()) countFuel(); else Serial.println("endMatch");
  } 
 } 
 
@@ -214,9 +261,9 @@ void lostAutoButton(){
  } else if(MatchPeriod == "Transition") {
   if (getMatchTime() > 52 || (getMatchTime() < 130 && getMatchTime() > 102)){
     countFuel();
-  } // change to lost (the same as won right now)
+  }
  } else {
-  Serial.println("endMatch");
+  if (inGracePeriod()) countFuel(); else Serial.println("endMatch");
  } 
 } 
 
