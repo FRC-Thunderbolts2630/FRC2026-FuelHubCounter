@@ -36,10 +36,10 @@ void handleRoot(){
   html += "<meta name='viewport' content='width=device-width, initial-scale=1'>\n";
   html += "<style>\n";
   // --- CSS VARIABLES AND STYLING ---
-  html += "body {background-color:#1a1a1a ; color:#1da3a1 ; font-family:'Segoe UI',sans-serif ; display:flex ; flex-direction:column ; align-items:center ; justify-content:center ; min-height:100vh ; margin:0 ;}";
+  html += "body {background-color:#1a1a1a ; color:#71be84 ; font-family:'Segoe UI',sans-serif ; display:flex ; flex-direction:column ; align-items:center ; justify-content:center ; min-height:100vh ; margin:0 ;}";
   html += "h1 {font-size:5vw ; letter-spacing:0.5vw ; margin-bottom:2vh ; color:#ffffff ; }";
   html += "h3 {color:#ffffff; margin-top:20px; font-weight:lighter;}";
-  html += ".counter-box {padding:5vw 8vw ; border-radius:3vw ; border: 0.8vw solid #1da3a1 ; box-shadow:0 0 4vw #1da3a1 ; text-align:center; transition:background-color 0.4s;}";
+  html += ".counter-box {padding:5vw 8vw ; border-radius:3vw ; border: 0.8vw solid #71be84 ; box-shadow:0 0 4vw #71be84 ; text-align:center; transition:background-color 0.4s;}";
   html += ".counter-box.hub-active {background:#1a3d32;}";
   html += ".counter-box.hub-inactive {background:#333;}";
   html += ".number {font-size: 20vw ; font-weight: bold ; font-family:'Courier New', monospace ; text-shadow:2px 2px #000 ; margin-bottom: 20px;}";
@@ -51,9 +51,9 @@ void handleRoot(){
   html += "      font-weight:bold; outline:none; text-align:center; margin: 5px;}";
   html += ".btn:hover {background: #ff4444; color:white; box-shadow: 0 0 2vw #ff4444;}\n";
   
-  // Mode Button Specific (Teal color)
-  html += ".btn-mode {border-color: #1da3a1; color: #1da3a1;}\n";
-  html += ".btn-mode:hover {background: #1da3a1; color:white; box-shadow: 0 0 2vw #1da3a1;}\n";
+  // Mode Button Specific (green color)
+  html += ".btn-mode {border-color: #71be84; color: #71be84;}\n";
+  html += ".btn-mode:hover {background: #71be84; color:white; box-shadow: 0 0 2vw #1da3a1;}\n";
   
   html += "@media(max-width:600px){h1 {font-size:8vw;} .number{font-size:25vw;} .btn{font-size:4vw;} .time-left{font-size:3.5vw; margin-bottom:2vw;}}\n";
   html += "</style>\n</head><body>\n";
