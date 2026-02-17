@@ -35,25 +35,28 @@ void handleRoot(){
   String html = "<!DOCTYPE html><html><head>\n";
   html += "<meta name='viewport' content='width=device-width, initial-scale=1'>\n";
   html += "<style>\n";
-  // --- CSS VARIABLES AND STYLING ---
-  html += "body {background-color:#1a1a1a ; color:#71be84 ; font-family:'Segoe UI',sans-serif ; display:flex ; flex-direction:column ; align-items:center ; justify-content:center ; min-height:100vh ; margin:0 ;}";
+  // CSS VARIABLES AND STYLING:
+  html += "body {background-color:#1a1a1a ; color:#27a359 ; font-family:'Segoe UI',sans-serif ; display:flex ; flex-direction:column ; align-items:center ; justify-content:center ; min-height:100vh ; margin:0 ;}";
   html += "h1 {font-size:5vw ; letter-spacing:0.5vw ; margin-bottom:2vh ; color:#ffffff ; }";
   html += "h3 {color:#ffffff; margin-top:20px; font-weight:lighter;}";
-  html += ".counter-box {padding:5vw 8vw ; border-radius:3vw ; border: 0.8vw solid #71be84 ; box-shadow:0 0 4vw #71be84 ; text-align:center; transition:background-color 0.4s;}";
+  html += ".counter-box {padding:5vw 8vw ; border-radius:3vw ; border: 0.8vw solid #27a359 ; box-shadow:0 0 4vw #27a359 ; text-align:center; transition:background-color 0.4s;}";
   html += ".counter-box.hub-active {background:#1a3d32;}";
   html += ".counter-box.hub-inactive {background:#333;}";
   html += ".number {font-size: 20vw ; font-weight: bold ; font-family:'Courier New', monospace ; text-shadow:2px 2px #000 ; margin-bottom: 20px;}";
   html += ".time-left {font-size:2vw; color:#7aa; margin-bottom:1.5vw; font-variant-numeric:tabular-nums;}";
   
-  // Button Styling
+  // Button Styling:
   html += ".btn {background:transparent; border: 0.4vw solid #ff4444; color: #ff4444; padding: 1.5vh 3vw; \n";
   html += "      font-size: 2vw; cursor: pointer; border-radius:1vw; transition:0.3s; text-transform:uppercase;\n";
   html += "      font-weight:bold; outline:none; text-align:center; margin: 5px;}";
   html += ".btn:hover {background: #ff4444; color:white; box-shadow: 0 0 2vw #ff4444;}\n";
   
-  // Mode Button Specific (green color)
-  html += ".btn-mode {border-color: #71be84; color: #71be84;}\n";
-  html += ".btn-mode:hover {background: #71be84; color:white; box-shadow: 0 0 2vw #1da3a1;}\n";
+  // Mode Button Specific (green color):
+  html += ".btn-mode {border-color: #27a359; color: #27a359;}\n";
+  html += ".btn-mode:hover {background: #27a359; color:white; box-shadow: 0 0 2vw #27a359;}\n";
+
+  // An active state style (mimics the hover effect):
+  html += ".active-mode {background: #27a359 !important; color:white !important; box-shadow: 0 0 2vw #1da3a1;}\n";
   
   html += "@media(max-width:600px){h1 {font-size:8vw;} .number{font-size:25vw;} .btn{font-size:4vw;} .time-left{font-size:3.5vw; margin-bottom:2vw;}}\n";
   html += "</style>\n</head><body>\n";
@@ -63,9 +66,9 @@ void handleRoot(){
 
   html += "<h3>Select Match Mode:</h3>\n";
   html += "<div style='margin-bottom: 30px;'>\n";
-  html += "  <button class='btn btn-mode' onclick=\"fetch('/setWon')\">Won Auto</button>\n";
-  html += "  <button class='btn btn-mode' onclick=\"fetch('/setLost')\">Lost Auto</button>\n";
-  html += "  <button class='btn btn-mode' onclick=\"fetch('/setUnlim')\">Unlimited</button>\n";
+  html += "  <button id='btnWon' class='btn btn-mode' onclick=\"setMode('Won', this)\">Won Auto</button>\n";
+  html += "  <button id='btnLost' class='btn btn-mode' onclick=\"setMode('Lost', this)\">Lost Auto</button>\n";
+  html += "  <button id='btnUnlim' class='btn btn-mode' onclick=\"setMode('Unlim', this)\">Unlimited</button>\n";
   html += "</div>\n";
 
   html += "<div class='time-left' id='timeDisplay'>—</div>\n";
@@ -93,7 +96,22 @@ void handleRoot(){
   html += "function resetCounter(){\n";
   html += "  fetch('/resetCounter').then(()=>updateCounter());\n}\n";
   html += "updateCounter(); setInterval(updateCounter,1000);\n";
+
+  html += "function setMode(mode, element){";
+  html += "  fetch('/set' + mode);"; 
+  html += "  document.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active-mode'));";
+  html += "  element.classList.add('active-mode');";
+  html += "}";
+
+  html += "window.onload = function() {";
+  html += "  let current = '" + CurrentMode + "';"; 
+  html += "  if(current === 'wonAuto') document.getElementById('btnWon').classList.add('active-mode');";
+  html += "  if(current === 'lostAuto') document.getElementById('btnLost').classList.add('active-mode');";
+  html += "  if(current === 'unlimeted') document.getElementById('btnUnlim').classList.add('active-mode');";
+  html += "};";
   html += "</script></body></html>";
+
+
 
   server.send(200, "text/html", html);
 
@@ -201,7 +219,7 @@ void getPeriod(){
   MatchPeriod = "Auto";
  } else if (getMatchTime() > 130){
   MatchPeriod = "TransitionShift";
- } else if (getMatchTime() > 30){
+ } else if (getMatchTime() > 33){
   MatchPeriod = "Transition";
  } else if(getMatchTime() > 0){
   MatchPeriod = "EndGame";
@@ -246,7 +264,7 @@ void wonAutoButton(){
  if(MatchPeriod == "Auto" || MatchPeriod == "TransitionShift" || MatchPeriod =="EndGame"){
   countFuel();
  } else if(MatchPeriod == "Transition") {
-  if (getMatchTime() > 102 || (getMatchTime() < 80 && getMatchTime() > 52)){
+  if (getMatchTime() < 58 && getMatchTime() > 33 || (getMatchTime() < 108 && getMatchTime() > 80)){
     countFuel();
   }
  } else {
@@ -259,7 +277,7 @@ void lostAutoButton(){
  if(MatchPeriod == "Auto" || MatchPeriod == "TransitionShift" || MatchPeriod =="EndGame"){
   countFuel();
  } else if(MatchPeriod == "Transition") {
-  if (getMatchTime() > 52 || (getMatchTime() < 130 && getMatchTime() > 102)){
+  if (getMatchTime < 80 && getMatchTime() > 58 || (getMatchTime() < 130 && getMatchTime() > 108)){
     countFuel();
   }
  } else {
