@@ -36,7 +36,11 @@ void handleRoot(){
   html += "<meta name='viewport' content='width=device-width, initial-scale=1'>\n";
   html += "<style>\n";
   // CSS VARIABLES AND STYLING:
+<<<<<<< HEAD
   html += "body {background-color:#1a1a1a ; color:#27a359 ; font-family:'Segoe UI',sans-serif ; display:flex ; flex-direction:column ; align-items:center ; justify-content:center ; min-height:100vh ; margin:0 ;}";
+=======
+  html += "body {background-color:#1a1a1a ; color:#71be84 ; font-family:'Segoe UI',sans-serif ; display:flex ; flex-direction:column ; align-items:center ; justify-content:center ; min-height:100vh ; margin:0 ;}";
+>>>>>>> b5a50785cf2fa63ca8891053754b6f45a32a826e
   html += "h1 {font-size:5vw ; letter-spacing:0.5vw ; margin-bottom:2vh ; color:#ffffff ; }";
   html += "h3 {color:#ffffff; margin-top:20px; font-weight:lighter;}";
   html += ".counter-box {padding:5vw 8vw ; border-radius:3vw ; border: 0.8vw solid #27a359 ; box-shadow:0 0 4vw #27a359 ; text-align:center; transition:background-color 0.4s;}";
@@ -52,11 +56,19 @@ void handleRoot(){
   html += ".btn:hover {background: #ff4444; color:white; box-shadow: 0 0 2vw #ff4444;}\n";
   
   // Mode Button Specific (green color):
+<<<<<<< HEAD
   html += ".btn-mode {border-color: #27a359; color: #27a359;}\n";
   html += ".btn-mode:hover {background: #27a359; color:white; box-shadow: 0 0 2vw #27a359;}\n";
 
   // An active state style (mimics the hover effect):
   html += ".active-mode {background: #27a359 !important; color:white !important; box-shadow: 0 0 2vw #1da3a1;}\n";
+=======
+  html += ".btn-mode {border-color: #71be84; color: #71be84;}\n";
+  html += ".btn-mode:hover {background: #71be84; color:white; box-shadow: 0 0 2vw #1da3a1;}\n";
+
+  // An active state style (mimics the hover effect):
+  html += ".active-mode {background: #71be84 !important; color:white !important; box-shadow: 0 0 2vw #1da3a1;}\n";
+>>>>>>> b5a50785cf2fa63ca8891053754b6f45a32a826e
   
   html += "@media(max-width:600px){h1 {font-size:8vw;} .number{font-size:25vw;} .btn{font-size:4vw;} .time-left{font-size:3.5vw; margin-bottom:2vw;}}\n";
   html += "</style>\n</head><body>\n";
