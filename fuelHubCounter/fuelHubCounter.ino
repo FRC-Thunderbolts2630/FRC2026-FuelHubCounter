@@ -27,7 +27,7 @@
  int SecToPlay = 0;
  int TimeGap = 0;
  String MatchPeriod = "none";
- String CurrentMode = "unlimeted";//Deafult mode.
+ String CurrentMode = "none";//Deafult mode.
 
 
 void handleRoot(){
@@ -35,13 +35,14 @@ void handleRoot(){
   String html = "<!DOCTYPE html><html><head>\n";
   html += "<meta name='viewport' content='width=device-width, initial-scale=1'>\n";
   html += "<style>\n";
+
   // CSS VARIABLES AND STYLING:
-  html += "body {background-color:#1a1a1a ; color:#27a359 ; font-family:'Segoe UI',sans-serif ; display:flex ; flex-direction:column ; align-items:center ; justify-content:center ; min-height:100vh ; margin:0 ;}";
+  html += "body {background-color:#1a1a1a ; color:#7ef4cc ; font-family:'Segoe UI',sans-serif ; display:flex ; flex-direction:column ; align-items:center ; justify-content:center ; min-height:100vh ; margin:0 ;}";
   html += "h1 {font-size:5vw ; letter-spacing:0.5vw ; margin-bottom:2vh ; color:#ffffff ; }";
   html += "h3 {color:#ffffff; margin-top:20px; font-weight:lighter;}";
-  html += ".counter-box {padding:5vw 8vw ; border-radius:3vw ; border: 0.8vw solid #27a359 ; box-shadow:0 0 4vw #27a359 ; text-align:center; transition:background-color 0.4s;}";
+  html += ".counter-box {padding:5vw 8vw ; border-radius:3vw ; border: 0.8vw solid #7ef4cc ; box-shadow:0 0 4vw #7ef4cc ; text-align:center; transition:background-color 0.4s;}";
   html += ".counter-box.hub-active {background:#1a3d32;}";
-  html += ".counter-box.hub-inactive {background:#333;}";
+  html += ".counter-box.hub-inactive {background:#c93e76;}";
   html += ".number {font-size: 20vw ; font-weight: bold ; font-family:'Courier New', monospace ; text-shadow:2px 2px #000 ; margin-bottom: 20px;}";
   html += ".time-left {font-size:2vw; color:#7aa; margin-bottom:1.5vw; font-variant-numeric:tabular-nums;}";
   
@@ -50,13 +51,16 @@ void handleRoot(){
   html += "      font-size: 2vw; cursor: pointer; border-radius:1vw; transition:0.3s; text-transform:uppercase;\n";
   html += "      font-weight:bold; outline:none; text-align:center; margin: 5px;}";
   html += ".btn:hover {background: #ff4444; color:white; box-shadow: 0 0 2vw #ff4444;}\n";
+
+  html += ".btn-start {border-color: #ffd700; color: #ffd700; margin-top: 20px;}\n";
+  html += ".btn-start:hover {background: #ffd700; color: #1a1a1a;}\n";
   
   // Mode Button Specific (green color):
-  html += ".btn-mode {border-color: #27a359; color: #27a359;}\n";
-  html += ".btn-mode:hover {background: #27a359; color:white; box-shadow: 0 0 2vw #27a359;}\n";
+  html += ".btn-mode {border-color: #7ef4cc; color: #7ef4cc;}\n";
+  html += ".btn-mode:hover {background: #7ef4cc; color:white; box-shadow: 0 0 2vw #7ef4cc;}\n";
 
   // An active state style (mimics the hover effect):
-  html += ".active-mode {background: #27a359 !important; color:white !important; box-shadow: 0 0 2vw #1da3a1;}\n";
+  html += ".active-mode {background: #7ef4cc !important; color:white !important; box-shadow: 0 0 2vw #1da3a1;}\n";
   
   html += "@media(max-width:600px){h1 {font-size:8vw;} .number{font-size:25vw;} .btn{font-size:4vw;} .time-left{font-size:3.5vw; margin-bottom:2vw;}}\n";
   html += "</style>\n</head><body>\n";
@@ -66,9 +70,9 @@ void handleRoot(){
 
   html += "<h3>Select Match Mode:</h3>\n";
   html += "<div style='margin-bottom: 30px;'>\n";
-  html += "  <button id='btnWon' class='btn btn-mode' onclick=\"setMode('Won', this)\">Won Auto</button>\n";
-  html += "  <button id='btnLost' class='btn btn-mode' onclick=\"setMode('Lost', this)\">Lost Auto</button>\n";
-  html += "  <button id='btnUnlim' class='btn btn-mode' onclick=\"setMode('Unlim', this)\">Unlimited</button>\n";
+  html += "  <button id='btnwon' class='btn btn-mode' onclick=\"setMode('won', this)\">won Auto</button>\n";
+  html += "  <button id='btnlost' class='btn btn-mode' onclick=\"setMode('lost', this)\">lost Auto</button>\n";
+  html += "  <button id='btnunlimeted' class='btn btn-mode' onclick=\"setMode('unlimeted', this)\">unlimeted</button>\n";
   html += "</div>\n";
 
   html += "<div class='time-left' id='timeDisplay'>—</div>\n";
@@ -76,6 +80,9 @@ void handleRoot(){
   html += "  <div class = 'number' id='counterDisplay'>0000</div>\n";
   html += "  <button class='btn' onclick='resetCounter()'>Reset Counter</button>\n";
   html += "</div>\n";
+
+  html += "<button id='btnStart' class='btn btn-start' onclick='startMatch()'>Start Match</button>\n";
+  html += "<div class='time-left' id='timeDisplay'>—</div>\n";
 
   // --- JAVASCRIPT ---
   html += "<script>\n";
@@ -97,21 +104,24 @@ void handleRoot(){
   html += "  fetch('/resetCounter').then(()=>updateCounter());\n}\n";
   html += "updateCounter(); setInterval(updateCounter,1000);\n";
 
+  html += "window.onload = function() {";
+  html += "  let current = '" + CurrentMode + "';"; 
+  html += "  if(current === 'wonAuto') document.getElementById('btnwon').classList.add('active-mode');";
+  html += "  if(current === 'lostAuto') document.getElementById('btnlost').classList.add('active-mode');";
+  html += "  if(current === 'unlimeted') document.getElementById('btnunlimeted').classList.add('active-mode');";
+  html += "};";
+
   html += "function setMode(mode, element){";
   html += "  fetch('/set' + mode);"; 
   html += "  document.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active-mode'));";
   html += "  element.classList.add('active-mode');";
   html += "}";
 
-  html += "window.onload = function() {";
-  html += "  let current = '" + CurrentMode + "';"; 
-  html += "  if(current === 'wonAuto') document.getElementById('btnWon').classList.add('active-mode');";
-  html += "  if(current === 'lostAuto') document.getElementById('btnLost').classList.add('active-mode');";
-  html += "  if(current === 'unlimeted') document.getElementById('btnUnlim').classList.add('active-mode');";
-  html += "};";
+  html+= "function startMatch() {";
+  html += "fetch('/startMatch').then(r => alert('Match Started!'));";
+  html += "}";
+  
   html += "</script></body></html>";
-
-
 
   server.send(200, "text/html", html);
 
@@ -138,6 +148,7 @@ void resetSystem(){
  for(int indx = 0; indx<4; indx++){
   detected[indx] = false;
   ballCount[indx] = 0;
+  MatchStartTime = 0;
 
  }
  TotalCount = 0;
@@ -147,38 +158,41 @@ void resetSystem(){
 
 void setup() {
 // Initialize serial communication at 115200 bits per second:
- Serial.begin(115200);
- Serial.println("starting setup");
- startCountdown();
- 
+  Serial.begin(115200);
+  Serial.println("starting setup");
+  
   // === Enable these lines to use static IP ===
- // if(!WiFi.config(local_ip, gateway, subnet)){
- //  Serial.println("faild to configet wifi");
- // }
+  // if(!WiFi.config(local_ip, gateway, subnet)){
+  //  Serial.println("faild to configet wifi");
+  // }
 
- // === Configure the ESP as WiFi Accesss Point 192.168.4.1 ===
- WiFi.softAP(ssid, password);
- Serial.println(WiFi.softAPIP());
- 
-   // === Alternativly enable connection to availble Wifi network ===
- // Wifi.begin(ssid,password);
- // while (WiFi.status() != WL_CONNECTED) {
- //  delay(500);
- //  Serial.print(".");
- // }
- // Serial.println(Wifi.localIP());
- 
- Serial.println("\nWiFi Connected!");
+  // === Configure the ESP as WiFi Accesss Point 192.168.4.1 ===
+  WiFi.softAP(ssid, password);
+  Serial.println(WiFi.softAPIP());
+  
+    // === Alternativly enable connection to availble Wifi network ===
+  // Wifi.begin(ssid,password);
+  // while (WiFi.status() != WL_CONNECTED) {
+  //  delay(500);
+  //  Serial.print(".");
+  // }
+  // Serial.println(Wifi.localIP());
+  
+  Serial.println("\nWiFi Connected!");
 
- server.on("/", handleRoot);
- server.on("/setWon", []() { CurrentMode = "wonAuto"; startCountdown(); server.send(200, "text/plain", "OK"); });
- server.on("/setLost", []() { CurrentMode = "lostAuto"; startCountdown(); server.send(200, "text/plain", "OK"); });
- server.on("/setUnlim", []() { CurrentMode = "unlimeted"; server.send(200, "text/plain", "OK"); });
- server.on("/getCounter", getCounter);
- server.on("/getTimeLeft", getTimeLeft);
- server.on("/getHubActive", getHubActive);
- server.on("/resetCounter", resetSystem);
- server.begin();
+  server.on("/", handleRoot);
+
+  server.on("/setwon", []() { CurrentMode = "wonAuto"; server.send(200, "text/plain", "Mode: won Auto"); });
+  server.on("/setlost", []() { CurrentMode = "lostAuto"; server.send(200, "text/plain", "Mode: lost Auto"); });
+  server.on("/setunlimeted", []() { CurrentMode = "unlimeted"; server.send(200, "text/plain", "Mode: Unlimited"); });
+
+  server.on("/startMatch", []() {if (CurrentMode == "none") {server.send(400, "text/plain", "Select a mode first!");} else {startCountdown(); /* This sets MatchStartTime = millis()*/server.send(200, "text/plain", "Match Started");}});
+
+  server.on("/getCounter", getCounter);
+  server.on("/getTimeLeft", getTimeLeft);
+  server.on("/getHubActive", getHubActive);
+  server.on("/resetCounter", resetSystem);
+  server.begin();
 
 }
 
@@ -201,8 +215,9 @@ void startCountdown(){
 }
 
 int getMatchTime() {
- unsigned long elapsed = millis() - MatchStartTime;
- if (elapsed >= MATCH_DURATION) {
+  if (MatchStartTime == 0) return MATCH_DURATION / 1000; // STAY AT 163 UNTIL START
+  unsigned long elapsed = millis() - MatchStartTime;
+  if (elapsed >= MATCH_DURATION) {
    if (matchEndedAt == 0) matchEndedAt = millis();
    return 0;
  }
@@ -210,45 +225,45 @@ int getMatchTime() {
 }
 
 bool inGracePeriod() {
- if (CurrentMode == "unlimeted" || matchEndedAt == 0) return false;
- return (millis() - matchEndedAt) <= GRACE_MS;
+  if (CurrentMode == "unlimeted" || matchEndedAt == 0) return false;
+  return (millis() - matchEndedAt) <= GRACE_MS;
 }
 
 void getPeriod(){
- if(getMatchTime() > 140){
-  MatchPeriod = "Auto";
- } else if (getMatchTime() > 130){
-  MatchPeriod = "TransitionShift";
- } else if (getMatchTime() > 33){
-  MatchPeriod = "Transition";
- } else if(getMatchTime() > 0){
-  MatchPeriod = "EndGame";
- } else{
-  MatchPeriod = "none";
- }
+  if(getMatchTime() > 140){
+    MatchPeriod = "Auto";
+  } else if (getMatchTime() > 130){
+    MatchPeriod = "TransitionShift";
+  } else if (getMatchTime() > 33){
+    MatchPeriod = "Transition";
+  } else if(getMatchTime() > 0){
+    MatchPeriod = "EndGame";
+  } else{
+    MatchPeriod = "none";
+  }
 }
 
 bool isHubActive(){
  if(CurrentMode == "unlimeted") return true;
  if(inGracePeriod()) return true;
  getPeriod();
- if(MatchPeriod == "Auto" || MatchPeriod == "TransitionShift" || MatchPeriod == "EndGame")
-   return true;
- if(MatchPeriod == "Transition"){
-   int t = getMatchTime();
-   if(CurrentMode == "wonAuto")
-     return (t > 102) || (t < 80 && t > 52);
-   if(CurrentMode == "lostAuto")
-     return (t > 52) || (t < 130 && t > 102);
- }
- return false;
-}
+  if(MatchPeriod == "Auto" || MatchPeriod == "TransitionShift" || MatchPeriod == "EndGame")
+    return true;
+  if(MatchPeriod == "Transition"){
+    int t = getMatchTime();
+    if(CurrentMode == "wonAuto")
+      return (t < 130 && t > 108 ) || (t < 80 && t > 58);
+    if(CurrentMode == "lostAuto")
+      return (t < 58 && t > 33) || (t < 108 && t > 80);
+  }
+  return false;
+  }
 
 void countFuel(){
  unsigned int interim_count = 0;
   if(millis() - lastMills > 8){
   // read the sensors every 8 mSec
-  for(int indx=0; indx < 4;indx++){
+  for(int indx = 0; indx < 4 ; indx++){
     SensorBallCount(indx);
     interim_count += ballCount[indx];
   }
@@ -260,45 +275,39 @@ void countFuel(){
 }
 
 void wonAutoButton(){
- getPeriod();
- if(MatchPeriod == "Auto" || MatchPeriod == "TransitionShift" || MatchPeriod =="EndGame"){
-  countFuel();
- } else if(MatchPeriod == "Transition") {
-  if (getMatchTime() < 58 && getMatchTime() > 33 || (getMatchTime() < 108 && getMatchTime() > 80)){
+  getPeriod();
+  if(MatchPeriod == "Auto" || MatchPeriod == "TransitionShift" || MatchPeriod =="EndGame"){
     countFuel();
-  }
- } else {
-  if (inGracePeriod()) countFuel(); else Serial.println("endMatch");
- } 
+  }else if(MatchPeriod == "Transition") {
+    if (getMatchTime() < 58 && getMatchTime() > 33 || (getMatchTime() < 108 && getMatchTime() > 80)){
+      countFuel();
+    } 
+  } 
 } 
 
 void lostAutoButton(){
- getPeriod();
- if(MatchPeriod == "Auto" || MatchPeriod == "TransitionShift" || MatchPeriod =="EndGame"){
-  countFuel();
- } else if(MatchPeriod == "Transition") {
-  if (getMatchTime() < 80 && getMatchTime() > 58 || (getMatchTime() < 130 && getMatchTime() > 108)){
+  getPeriod();
+  if(MatchPeriod == "Auto" || MatchPeriod == "TransitionShift" || MatchPeriod =="EndGame"){
     countFuel();
+  }else if(MatchPeriod == "Transition") {
+    if (getMatchTime() < 80 && getMatchTime() > 58 || (getMatchTime() < 130 && getMatchTime() > 108)){
+      countFuel();
+    }
   }
- } else {
-  if (inGracePeriod()) countFuel(); else Serial.println("endMatch");
- } 
 } 
 
 void unlimetedCountButton(){
- countFuel();
+  countFuel();
 }
 
 void loop() {
- server.handleClient();
- if(CurrentMode == "wonAuto"){
-  wonAutoButton();
+  server.handleClient();
 
- }else if(CurrentMode == "lostAuto"){
-  lostAutoButton();
-
- }else if(CurrentMode == "unlimeted"){
-  unlimetedCountButton();
-
- }
+  if(CurrentMode == "unlimeted") {
+    unlimetedCountButton();
+  }else if (MatchStartTime != 0) {
+      if(CurrentMode == "wonAuto") wonAutoButton();
+      else if(CurrentMode == "lostAuto") lostAutoButton();
+  }
 }
+
