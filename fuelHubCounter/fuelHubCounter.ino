@@ -205,6 +205,7 @@ void SensorBallCount(int indx){
  }
  else if(sensorValue < OFF_THRESHOLD && detected[indx]){
   detected[indx] = false;
+  
 
  }
 }
@@ -251,9 +252,9 @@ bool isHubActive(){
     return true;
   if(MatchPeriod == "Transition"){
     int t = getMatchTime();
-    if(CurrentMode == "wonAuto")
-      return (t < 130 && t > 108 ) || (t < 80 && t > 58);
     if(CurrentMode == "lostAuto")
+      return (t < 130 && t > 108 ) || (t < 80 && t > 58);
+    if(CurrentMode == "wonAuto")
       return (t < 58 && t > 33) || (t < 108 && t > 80);
   }
   return false;
@@ -267,7 +268,6 @@ void countFuel(){
     SensorBallCount(indx);
     interim_count += ballCount[indx];
   }
-
   TotalCount = interim_count; 
   lastMills = millis();
   Serial.println(TotalCount);
@@ -310,4 +310,3 @@ void loop() {
       else if(CurrentMode == "lostAuto") lostAutoButton();
   }
 }
-
