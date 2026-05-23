@@ -253,7 +253,7 @@ bool isHubActive(){
   if(MatchPeriod == "Transition"){
     int t = getMatchTime();
     if(CurrentMode == "lostAuto")
-      return (t < 130 && t > 108 ) || (t < 80 && t > 58);
+      return (t < 130 && t > 105 ) || (t < 83 && t > 55);
     if(CurrentMode == "wonAuto")
       return (t < 58 && t > 33) || (t < 108 && t > 80);
   }
@@ -290,7 +290,7 @@ void lostAutoButton(){
   if(MatchPeriod == "Auto" || MatchPeriod == "TransitionShift" || MatchPeriod =="EndGame"){
     countFuel();
   }else if(MatchPeriod == "Transition") {
-    if (getMatchTime() < 80 && getMatchTime() > 58 || (getMatchTime() < 130 && getMatchTime() > 108)){
+    if (getMatchTime() < 83 && getMatchTime() > 55 || (getMatchTime() < 130 && getMatchTime() > 105)){
       countFuel();
     }
   }
